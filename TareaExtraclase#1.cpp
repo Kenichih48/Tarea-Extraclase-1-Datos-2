@@ -24,21 +24,21 @@ class Node {
 class List {
     public:
         Node* start; //contains the memory position of the first element in the list        
-        int length = 0;
+        int length = 0; //length of the list
         int i = 0;
         Node* current_node;
         Node* old_start;
-        void insert_node(Node* node){
+        void insert_node(Node* node){ //inserts a node to the list
             if (length != 0){                
                 node->set_pointer(start);
                 }
             start = node;
             length += 1;
         };
-        Node* get_start_pointer(){
+        Node* get_start_pointer(){ //gets the pointer of the first element of the list
             return start;
         };
-        void modify_element(int position, int new_value){
+        void modify_element(int position, int new_value){ //modifies the value of a specified element in the list
             if (position >= 0 && position < length){
                 current_node = start; 
                 while(i < position){
@@ -65,7 +65,7 @@ class List {
                 cout<<"The list is empty!!"<<endl;
             }   
         };
-        void view_list(){ //Prints the list
+        void view_list(){ //Prints the values that are stored in list
             if (length > 0){
                 current_node = start; 
                 cout<<"Current state of the list: [";
@@ -88,7 +88,7 @@ class List {
 class Collector{ //Elements are added at the start of the list, when an element is removed, its removed from the beginning, and the element it points to becomes the new start. LIFO
     public:
         Node* start; //contains the memory position of the first element in the list
-        int length = 0;
+        int length = 0; //length of the collector
         Node* old_start;
         Node* current_node;
         int i = 0;
@@ -99,7 +99,7 @@ class Collector{ //Elements are added at the start of the list, when an element 
             start = memory_address;
             length += 1;
         };
-        bool verify_recycled(){ //verifies is there is a memory address that can be recycled
+        bool verify_recycled(){ //verifies if there is a memory address that can be recycled
             if (length > 0){
                 return true;
             }
@@ -107,7 +107,7 @@ class Collector{ //Elements are added at the start of the list, when an element 
                 return false;
             }
         };
-        Node* get_recycled_memory_address(){ //returns a memory address to re-use, and removes it from collector
+        Node* get_recycled_memory_address(){ //returns a reusable memory address, and removes it from collector
             old_start = start;
             if (length > 1){
                 start = start->get_pointer();
@@ -136,10 +136,11 @@ class Collector{ //Elements are added at the start of the list, when an element 
 
 };
 
+//global variables
 List list;
 Collector collector;
 
-void * operator new(size_t size){
+void * operator new(size_t size){ //overloaded the method new
     if (collector.verify_recycled() == true){
     	cout<<"A memory address has been reused"<<endl;
         void * pointer = collector.get_recycled_memory_address();
@@ -152,9 +153,9 @@ void * operator new(size_t size){
     }
 }
 
-void operator delete(void * pointer){
+void operator delete(void * pointer){ //overloaded the method delete
     cout<<"Delete has been called"<<endl;
-    list.remove_node(); //b do we leave it like this???
+    list.remove_node(); 
     collector.insert_memory_address((Node*) pointer);
 }
 
